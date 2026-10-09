@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orbit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- non-blocking font load: the page renders immediately with system fonts, then swaps -->
+  <link rel="stylesheet" media="print" onload="this.media='all'"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap"></noscript>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-mode="timer" data-state="idle" data-view="focus" data-theme="sticker" data-pattern="dots">
+
+<!-- icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="7 4 20 12 7 20 7 4" fill="currentColor"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3c3 0 5.2-2.2 5.2-5C22.5 5.7 17.8 2 12 2z"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></symbol>
+  <symbol id="i-stopwatch" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13V9M10 2h4M19 5l1.5 1.5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 22c4 0 7-2.8 7-7 0-3-1.6-5-3-6.6-.4 1.6-1.4 2.6-2.5 3 .3-3.4-1.2-6.6-4.5-8.4.3 3.4-1.6 5.2-3 7.1C4.7 11.8 5 13.2 5 15c0 4.2 3 7 7 7z"/></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M6 2h12M6 22h12M7 2c0 5 5 6 5 10s-5 5-5 10M17 2c0 5-5 6-5 10s5 5 5 10"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+</svg>
+
+<div id="toasts" class="toasts" aria-live="assertive"></div>
+
+<div class="app">
+
+  <!-- ===== top bar: wordmark, date, controls ===== -->
+  <header class="top">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"><svg class="ic"><use href="#i-timer"/></svg></span>
+      <span class="brand-text">Orbit</span>
+    </div>
+
+    <span class="date-chip" id="dateChip"></span>
+
+    <div class="top-right">
+      <span class="now-chip" id="currentTime">--:--:--</span>
+      <div class="user-chip" id="headUser"><span class="avatar" id="headAvatar">?</span><span id="headName">Guest</span></div>
+      <div class="theme-wrap">
+        <button id="themeBtn" class="icon-btn" aria-label="Choose theme" aria-haspopup="true" aria-expanded="false"><svg class="ic"><use href="#i-palette"/></svg></button>
+        <div id="themePop" class="theme-pop" role="menu" aria-label="Themes" hidden></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+
+      <!-- ===== CLOCK INSTRUMENT ===== -->
+      <section class="tile clock-tile sec-focus" aria-label="Clock">
+        <div class="tile-head">
+          <div class="tabs" role="tablist" aria-label="Mode">
+            <button role="tab" id="tabTimer" class="tab" aria-selected="true"><svg class="ic"><use href="#i-timer"/></svg>Timer</button>
+            <button role="tab" id="tabSw" class="tab" aria-selected="false"><svg class="ic"><use href="#i-stopwatch"/></svg>Stopwatch</button>
+          </div>
+          <div id="status" class="status" role="status" aria-live="polite"></div>
+        </div>
+
+        <div class="clock-body">
+          <div class="dial" id="dial">
+            <div class="pie" id="pie"><div class="hand"></div></div>
+            <div class="dial-center">
+              <div id="digits" class="flap" role="timer" aria-live="off">25:00</div>
+              <div id="sub" class="sub">Ends at --:--:--</div>
+            </div>
+          </div>
+
+          <div class="clock-side">
+            <!-- timer-only controls fold away in stopwatch mode -->
+            <div class="collapse" id="timerExtras">
+              <div class="collapse-inner">
+                <div class="presets">
+                  <button class="chip" data-min="15">15 min</button>
+                  <button class="chip" data-min="25">Focus 25</button>
+                  <button class="chip" data-min="50">50 min</button>
+                  <button class="chip" data-min="90">Deep 90</button>
+                  <button class="chip" data-min="5">Break 5</button>
+                </div>
+                <details class="custom">
+                  <summary>Custom time</summary>
+                  <div class="inputs">
+                    <label><span>Days</span><input type="number" id="daysInput" placeholder="0" min="0" step="1"></label>
+                    <label><span>Hours</span><input type="number" id="hoursInput" placeholder="0" min="0" step="1"></label>
+                    <label><span>Min</span><input type="number" id="minutesInput" placeholder="0" min="0" step="1"></label>
+                    <label><span>Sec</span><input type="number" id="secondsInput" placeholder="0" min="0" step="1"></label>
+                  </div>
+                  <button id="setBtn" class="btn small">Set time</button>
+                </details>
+              </div>
+            </div>
+
+            <div id="focusRow" class="focus-row" hidden>
+              <svg class="ic"><use href="#i-target"/></svg>
+              <span class="focus-label"><small>Tracking</small><span id="focusName"></span></span>
+              <button id="focusClear" class="focus-clear" aria-label="Stop tracking time to this task"><svg class="ic"><use href="#i-x"/></svg></button>
+            </div>
+
+            <div class="controls">
+              <button id="mainBtn" class="btn primary"></button>
+              <button id="resetBtn" class="btn" aria-label="Reset"><svg class="ic"><use href="#i-reset"/></svg><span>Reset</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== PLAN + NEXT DEADLINE TICKET ===== -->
+      <div class="side sec-tasks">
+        <section class="tile plan-tile plan" id="plan" aria-label="Plan progress">
+          <div class="plan-top">
+            <span class="overline">Your plan</span>
+            <b id="planPct" class="plan-pct">0%</b>
+          </div>
+          <div class="pbar big" id="planBar" role="progressbar" aria-label="Plan progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+          <p id="planSub" class="plan-sub">Sign in to plan your work</p>
+        </section>
+
+        <section class="ticket" id="nextUp" data-state="none" aria-label="Next deadline">
+          <div class="tk-main">
+            <span class="overline"><svg class="ic"><use href="#i-calendar"/></svg>Next deadline</span>
+            <div class="nu-name" id="nuName">Sign in to start</div>
+            <div class="nu-time" id="nuTime">&mdash;</div>
+            <div class="pbar nu-bar"><i id="nuFill"></i></div>
+          </div>
+          <div class="tk-stub">
+            <span id="nuMeta" class="nu-meta">No tasks yet</span>
+            <button id="nuFocus" type="button" class="focus-btn" hidden></button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ===== TODAY AT A GLANCE ===== -->
+    <section class="stats sec-focus" aria-label="Today at a glance">
+      <div class="sticker" title="Countdown timers that ran all the way to zero today"><svg class="ic"><use href="#i-flame"/></svg><b id="sessions">0</b><small>Sessions completed</small></div>
+      <div class="sticker" title="Actual running time of the timer and stopwatch today"><svg class="ic"><use href="#i-hourglass"/></svg><b id="focusMin">0</b><small>Minutes focused</small></div>
+      <div class="sticker"><svg class="ic"><use href="#i-clipboard"/></svg><b id="stOpen">&mdash;</b><small>Open tasks</small></div>
+      <div class="sticker"><svg class="ic"><use href="#i-target"/></svg><b id="stTracked">&mdash;</b><small>Tracked on tasks</small></div>
+    </section>
+
+    <!-- ===== TASK BOARD ===== -->
+    <section class="board sec-tasks" aria-label="Tasks">
+      <div class="board-head">
+        <div>
+          <h2>Tasks</h2>
+          <p id="taskSummary" class="muted">Sign in to track your work</p>
+        </div>
+        <div class="board-actions">
+          <div id="userBar" class="user-bar" hidden>
+            <span class="avatar" id="avatar">?</span>
+            <b id="userName"></b>
+            <button id="signOut" class="icon-btn small" aria-label="Sign out" title="Sign out"><svg class="ic"><use href="#i-logout"/></svg></button>
+          </div>
+          <button id="newTaskBtn" class="btn primary" hidden><svg class="ic"><use href="#i-plus"/></svg><span>New task</span><kbd>N</kbd></button>
+        </div>
+      </div>
+
+      <form id="authView" class="auth" autocomplete="on" novalidate>
+        <h3 id="authTitle">Sign in to manage tasks</h3>
+        <p class="auth-note">Profiles live <b>only in this browser on this device</b>. No server means no password recovery and no sync. Don't reuse a password you use elsewhere.</p>
+        <label class="field"><span>Username</span>
+          <input id="authUser" type="text" autocomplete="username" maxlength="20" placeholder="e.g. deepanshi">
+        </label>
+        <label class="field"><span>Password</span>
+          <input id="authPass" type="password" autocomplete="current-password" placeholder="At least 6 characters">
+        </label>
+        <label class="check-row"><input type="checkbox" id="authRemember"> Keep me signed in on this device</label>
+        <div id="authError" class="auth-error" role="alert"></div>
+        <button id="authSubmit" type="submit" class="btn primary wide">Sign in</button>
+        <button id="authSwitch" type="button" class="link">New here? Create a profile</button>
+      </form>
+
+      <div id="taskView" class="task-view" hidden>
+        <div class="tabs four" id="filters" role="tablist" aria-label="Filter tasks">
+          <button role="tab" class="tab" data-f="all" aria-selected="true">All<span class="cnt" id="cAll">0</span></button>
+          <button role="tab" class="tab" data-f="today" aria-selected="false">Today<span class="cnt" id="cToday">0</span></button>
+          <button role="tab" class="tab" data-f="overdue" aria-selected="false">Overdue<span class="cnt" id="cOver">0</span></button>
+          <button role="tab" class="tab" data-f="done" aria-selected="false">Done<span class="cnt" id="cDone">0</span></button>
+        </div>
+
+        <div id="notifyBar" class="notify-bar"></div>
+
+        <ul id="taskList" class="task-list"></ul>
+        <p class="task-tip"><b>How to use:</b> add a task, press <span class="tip-ic">Focus</span> on it, then run the Timer or Stopwatch. Your study time is added to that task and fills its bar. Press <span class="tip-ic">Done</span> when it's finished.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ===== NEW / EDIT TASK DIALOG ===== -->
+<dialog id="taskDialog" class="dlg" aria-labelledby="ntLabel">
+  <div class="dlg-body">
+    <div class="dlg-head">
+      <h3 id="ntLabel">New task</h3>
+      <button type="button" id="dlgClose" class="icon-btn small" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <form id="taskForm" class="task-form" novalidate>
+      <p class="tf-intro">Fill in all three steps. The progress bar on each task fills as you study it.</p>
+
+      <div class="tf-field">
+        <label class="tf-label" for="taskInput"><b>1</b> What do you need to do? <em>required</em></label>
+        <input id="taskInput" type="text" maxlength="80" placeholder="e.g. Finish DSA assignment">
+      </div>
+
+      <div class="tf-field">
+        <label class="tf-label" for="taskDue"><b>2</b> Finish it by <em>required</em></label>
+        <input type="datetime-local" id="taskDue">
+        <div class="tf-quick">
+          <button type="button" class="chip tiny" data-add="30">in 30 min</button>
+          <button type="button" class="chip tiny" data-add="60">in 1 hour</button>
+          <button type="button" class="chip tiny" data-add="180">in 3 hours</button>
+          <button type="button" class="chip tiny" data-add="tomorrow">Tomorrow 9 am</button>
+        </div>
+        <small class="hint">You get an alert if it isn't marked done by then.</small>
+      </div>
+
+      <div class="tf-field">
+        <label class="tf-label" for="taskEst"><b>3</b> How much study time does it need? <em>required</em></label>
+        <div class="est-row">
+          <input type="number" id="taskEst" min="1" max="1440" step="1" placeholder="e.g. 45">
+          <span class="unit">minutes</span>
+        </div>
+        <div class="tf-quick">
+          <button type="button" class="chip tiny" data-est="15">15 min</button>
+          <button type="button" class="chip tiny" data-est="30">30 min</button>
+          <button type="button" class="chip tiny" data-est="60">1 hour</button>
+          <button type="button" class="chip tiny" data-est="120">2 hours</button>
+        </div>
+        <small class="hint">Your best guess. Tracked time fills the progress bar against this.</small>
+      </div>
+
+      <div class="tf-field">
+        <span class="tf-label">Priority <em class="opt">optional</em></span>
+        <div class="tf-prio" role="radiogroup" aria-label="Priority">
+          <label class="prio-opt p-low"><input type="radio" name="prio" value="low"><span>Low</span></label>
+          <label class="prio-opt p-med"><input type="radio" name="prio" value="med" checked><span>Medium</span></label>
+          <label class="prio-opt p-high"><input type="radio" name="prio" value="high"><span>High</span></label>
+        </div>
+      </div>
+
+      <div id="taskFormError" class="auth-error" role="alert"></div>
+      <div class="dlg-actions">
+        <button id="taskCancel" type="button" class="btn">Cancel</button>
+        <button id="taskSubmit" type="submit" class="btn primary"></button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<!-- mobile bottom nav -->
+<nav class="mobile-nav" aria-label="Sections">
+  <button id="navFocus" aria-current="true"><svg class="ic"><use href="#i-timer"/></svg>Focus</button>
+  <button id="navTasks"><svg class="ic"><use href="#i-list"/></svg>Tasks</button>
+</nav>
+
+<script src="script.js"></script>
+
+</body>
+</html>

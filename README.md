@@ -8,7 +8,7 @@ The idea: pick a task, run the clock, and the time you study is **logged to that
 
 Source code: https://github.com/deepanshi-code/Orbit
 
-![Orbit dashboard](prototype/dashboard.png)
+![Orbit dashboard](dashboard.png)
 
 ---
 
@@ -20,12 +20,12 @@ These images are the real app running with demo data (a timer mid-session, one t
 
 | Task board | New task |
 |---|---|
-| <img src="prototype/task-board.png" alt="Task board with progress bars and deadlines"> | <img src="prototype/new-task.png" alt="New task dialog with three required steps"> |
+| <img src="task-board.png" alt="Task board with progress bars and deadlines"> | <img src="new-task.png" alt="New task dialog with three required steps"> |
 | Every task shows its priority, deadline, study time and progress. The task being tracked is highlighted. | Three required steps: what, when, and how much study time it needs. |
 
 ### Another theme
 
-<img src="prototype/light-theme.png" alt="Orbit in the light Ivory theme">
+<img src="light-theme.png" alt="Orbit in the light Ivory theme">
 
 Six themes are built in (see [Interface](#interface)); this is **Ivory**.
 
@@ -33,7 +33,7 @@ Six themes are built in (see [Interface](#interface)); this is **Ivory**.
 
 | Clock | Tasks |
 |---|---|
-| <img src="prototype/mobile-clock.png" alt="Orbit clock on a phone" width="300"> | <img src="prototype/mobile-tasks.png" alt="Orbit task view on a phone" width="300"> |
+| <img src="mobile-clock.png" alt="Orbit clock on a phone" width="300"> | <img src="mobile-tasks.png" alt="Orbit task view on a phone" width="300"> |
 
 On a phone the page switches between **Focus** and **Tasks** from a bottom bar.
 
@@ -145,7 +145,7 @@ To publish your own copy, enable GitHub Pages for the repository (Settings → P
 | `script.js` | Application logic: clocks, tasks, profiles, alerts, themes |
 | `architecture.png` | Architecture diagram shown above |
 | `screenshot-dashboard.png` | Signed-out first view shown above |
-| `prototype/` | Screenshots of the running app (dashboard, task board, new-task dialog, light theme, phone views) |
+| `dashboard.png`, `task-board.png`, `new-task.png`, `light-theme.png`, `mobile-clock.png`, `mobile-tasks.png` | Prototype screenshots of the running app shown above |
 
 Fonts (Bricolage Grotesque, DM Sans, Space Mono) load from Google Fonts and fall back to system fonts offline.
 
